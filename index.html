@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор стоимости услуги</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            margin-bottom: 10px;
+            padding: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            font-weight: normal;
+        }
+        .radio-group input {
+            width: auto;
+            margin-right: 8px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Калькулятор стоимости услуги</h1>
+    
+    <form id="calculator-form">
+        <div class="form-group">
+            <label for="quantity">Количество:</label>
+            <input type="number" id="quantity" name="quantity" min="1" value="1">
+        </div>
+        
+        <div class="form-group">
+            <label>Тип услуги:</label>
+            <div class="radio-group" id="service-type-group">
+                <label>
+                    <input type="radio" name="serviceType" value="basic" checked>
+                    Базовая услуга
+                </label>
+                <label>
+                    <input type="radio" name="serviceType" value="standard">
+                    Стандартная услуга
+                </label>
+                <label>
+                    <input type="radio" name="serviceType" value="premium">
+                    Премиум услуга
+                </label>
+            </div>
+        </div>
+        
+        <div class="form-group hidden" id="options-group">
+            <label for="options">Опции:</label>
+            <select id="options" name="options">
+                <option value="option1">Опция 1</option>
+                <option value="option2">Опция 2</option>
+                <option value="option3">Опция 3</option>
+            </select>
+        </div>
+        
+        <div class="form-group hidden" id="property-group">
+            <label>
+                <input type="checkbox" id="property" name="property">
+                Дополнительное свойство
+            </label>
+        </div>
+        
+        <div class="result" id="result">
+            Общая стоимость: 0 руб.
+        </div>
+    </form>
+
+    <script>
+        // Цены для различных типов услуг и опций
+        const prices = {
+            basic: 100,
+            standard: 200,
+            premium: 300,
+            options: {
+                option1: 0,
+                option2: 50,
+                option3: 100
+            },
+            property: 75
+        };
+
+        // Функция для расчета стоимости
+        function calculatePrice() {
+            const quantity = parseInt(document.getElementById('quantity').value) || 0;
+            const serviceType = document.querySelector('input[name="serviceType"]:checked').value;
+            const options = document.getElementById('options');
+            const property = document.getElementById('property');
+            
+            let price = prices[serviceType];
+            
+            // Добавляем стоимость опции, если она выбрана и доступна
+            if (options && !options.classList.contains('hidden')) {
+                price += prices.options[options.value];
+            }
+            
+            // Добавляем стоимость свойства, если оно выбрано и доступно
+            if (property && !property.classList.contains('hidden') && property.checked) {
+                price += prices.property;
+            }
+            
+            // Общая стоимость = цена за единицу * количество
+            const totalPrice = price * quantity;
+            
+            // Обновляем отображение результата
+            document.getElementById('result').textContent = `Общая стоимость: ${totalPrice} руб.`;
+        }
+
+        // Функция для обновления видимости элементов формы
+        function updateFormVisibility() {
+            const serviceType = document.querySelector('input[name="serviceType"]:checked').value;
+            const optionsGroup = document.getElementById('options-group');
+            const propertyGroup = document.getElementById('property-group');
+            
+            // Скрываем все дополнительные элементы
+            optionsGroup.classList.add('hidden');
+            propertyGroup.classList.add('hidden');
+            
+            // Показываем соответствующие элементы в зависимости от типа услуги
+            switch(serviceType) {
+                case 'basic':
+                    // Без дополнительных опций и свойств
+                    break;
+                case 'standard':
+                    // Только опции
+                    optionsGroup.classList.remove('hidden');
+                    break;
+                case 'premium':
+                    // Только свойство
+                    propertyGroup.classList.remove('hidden');
+                    break;
+            }
+        }
+
+        // Инициализация при загрузке DOM
+        document.addEventListener('DOMContentLoaded', function() {
+            // Начальное обновление видимости и расчета
+            updateFormVisibility();
+            calculatePrice();
+            
+            // Обработчики событий для элементов формы
+            document.getElementById('quantity').addEventListener('input', calculatePrice);
+            
+            const serviceTypeRadios = document.querySelectorAll('input[name="serviceType"]');
+            serviceTypeRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    updateFormVisibility();
+                    calculatePrice();
+                });
+            });
+            
+            document.getElementById('options').addEventListener('change', calculatePrice);
+            document.getElementById('property').addEventListener('change', calculatePrice);
+        });
+    </script>
+</body>
+</html>
