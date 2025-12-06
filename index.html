@@ -124,13 +124,13 @@
             const quantityInput = document.getElementById('quantity');
             let quantity = parseInt(quantityInput.value) || 0;
             
-            // Проверка на отрицательные числа и корректировка
+            // Проверка на отрицательные числа
             if (quantity < 1) {
                 quantity = 1;
                 quantityInput.value = 1;
             }
             
-            // Проверка на превышение максимума
+            // Проверка на максимум
             if (quantity > 100) {
                 quantity = 100;
                 quantityInput.value = 100;
