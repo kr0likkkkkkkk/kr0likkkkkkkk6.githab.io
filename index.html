@@ -121,7 +121,21 @@
 
         // Расчет стоимости
         function calculatePrice() {
-            const quantity = parseInt(document.getElementById('quantity').value) || 0;
+            const quantityInput = document.getElementById('quantity');
+            let quantity = parseInt(quantityInput.value) || 0;
+            
+            // Проверка на отрицательные числа и корректировка
+            if (quantity < 1) {
+                quantity = 1;
+                quantityInput.value = 1;
+            }
+            
+            // Проверка на превышение максимума
+            if (quantity > 100) {
+                quantity = 100;
+                quantityInput.value = 100;
+            }
+            
             const serviceType = document.querySelector('input[name="serviceType"]:checked').value;
             const options = document.getElementById('options');
             const property = document.getElementById('property');
