@@ -58,7 +58,13 @@
     <form id="calculator-form">
         <div class="form-group">
             <label for="quantity">Количество:</label>
-            <input type="number" id="quantity" name="quantity" min="1" value="1">
+            <input type="number" 
+                   id="quantity" 
+                   name="quantity" 
+                   min="1" 
+                   max="100" 
+                   step="1" 
+                   value="1">
         </div>
         
         <div class="form-group">
@@ -101,7 +107,6 @@
     </form>
 
     <script>
-        // Цены для различных типов услуг и опций
         const prices = {
             basic: 100,
             standard: 200,
@@ -114,7 +119,7 @@
             property: 75
         };
 
-        // Функция для расчета стоимости
+        // Расчет стоимости
         function calculatePrice() {
             const quantity = parseInt(document.getElementById('quantity').value) || 0;
             const serviceType = document.querySelector('input[name="serviceType"]:checked').value;
@@ -123,12 +128,12 @@
             
             let price = prices[serviceType];
             
-            // Добавляем стоимость опции, если она выбрана и доступна
+            // Стоимость опции(если есть)
             if (options && !options.classList.contains('hidden')) {
                 price += prices.options[options.value];
             }
             
-            // Добавляем стоимость свойства, если оно выбрано и доступно
+            // Стоимость свойства(если есть)
             if (property && !property.classList.contains('hidden') && property.checked) {
                 price += prices.property;
             }
@@ -136,31 +141,25 @@
             // Общая стоимость = цена за единицу * количество
             const totalPrice = price * quantity;
             
-            // Обновляем отображение результата
             document.getElementById('result').textContent = `Общая стоимость: ${totalPrice} руб.`;
         }
 
-        // Функция для обновления видимости элементов формы
         function updateFormVisibility() {
             const serviceType = document.querySelector('input[name="serviceType"]:checked').value;
             const optionsGroup = document.getElementById('options-group');
             const propertyGroup = document.getElementById('property-group');
             
-            // Скрываем все дополнительные элементы
+            // Скрытие доп.элементов
             optionsGroup.classList.add('hidden');
             propertyGroup.classList.add('hidden');
             
-            // Показываем соответствующие элементы в зависимости от типа услуги
             switch(serviceType) {
                 case 'basic':
-                    // Без дополнительных опций и свойств
                     break;
                 case 'standard':
-                    // Только опции
                     optionsGroup.classList.remove('hidden');
                     break;
                 case 'premium':
-                    // Только свойство
                     propertyGroup.classList.remove('hidden');
                     break;
             }
